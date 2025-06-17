@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Reader</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: url('img/mind_read1.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        
+        /* Fire particles */
+        .fire-particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ff7b00, #ff0000);
+            border-radius: 50%;
+            animation: float-up 2s ease-out infinite;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        /* Broken glass effect */
+        .glass-piece {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation: shatter 1.5s ease-out forwards;
+            display: none;
+        }
+        
+        @keyframes shatter {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) rotate(var(--rot));
+                opacity: 0;
+            }
+        }        .container {
+            text-align: center;
+            background: url('img/mind_read2.jpg') no-repeat center center;
+            background-size: cover;
+            padding: 2rem;
+            border-radius: 15px;
+            position: relative;
+            z-index: 2;
+            min-width: 300px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            z-index: -1;
+        }
+        
+        .container.reading-mind {
+            background: url('img/mind_read3.jpg') no-repeat center center;
+            background-size: cover;
+            transition: background 1s ease-in-out;
+        }
+          .container.reading-mind::before {            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .copyright {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8rem;
+            opacity: 0.3;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            font-family: 'Arial', sans-serif;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .dodge-button {
+            position: fixed;
+            padding: 15px 25px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+            z-index: 1000;
+            animation: buttonGlow 2s infinite;
+        }
+
+        .dodge-button:hover {
+            background: #ff6666;
+        }        @keyframes buttonGlow {
+            0% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 68, 68, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.5); }
+        }
+        
+        .copyright {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 1;
+            font-style: italic;
+        }        @keyframes titleGlow {
+            0% { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073; }
+            100% { text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6; }
+        }
+
+        @keyframes inputGlow {
+            0% { box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00ff00, 0 0 20px #00ff00; }
+            100% { box-shadow: 0 0 10px #fff, 0 0 15px #7fff7f, 0 0 20px #7fff7f, 0 0 25px #7fff7f; }
+        }
+
+        @keyframes buttonGlowMain {
+            0% { box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #884dff, 0 0 20px #884dff; }
+            100% { box-shadow: 0 0 10px #fff, 0 0 15px #aa80ff, 0 0 20px #aa80ff, 0 0 25px #aa80ff; }
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            color: #fff;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        input {
+            padding: 10px 15px;
+            font-size: 1.2rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin-right: 10px;
+            outline: none;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            animation: inputGlow 2s ease-in-out infinite alternate;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            background: rgba(0, 0, 0, 0.5);
+            animation: inputGlow 1s ease-in-out infinite alternate;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #6a3093, #a044ff);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: buttonGlowMain 2s ease-in-out infinite alternate;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            animation: buttonGlowMain 1s ease-in-out infinite alternate;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+
+        button:hover::after {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        #loading {
+            display: none;
+            margin: 20px 0;
+        }
+        #result {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.5rem;
+            animation: fadeIn 1s;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            margin: 20px auto;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>    <div class="fire-particles" id="fireParticles"></div>
+    <button id="dodgeButton" class="dodge-button">You can't read my mind!</button>
+    <div class="container">        <h1>🔮 Mind Reader</h1>
+        <div id="inputSection">
+            <p>Think of anything... a word, number, or your deepest thought...</p>
+            <input type="text" id="thoughtInput" placeholder="Enter your thought..." maxlength="50">
+            <button onclick="readMind()">Read My Mind</button>
+        </div>
+        <div id="loading">
+            <p>Reading your mind...</p>
+            <div class="spinner"></div>
+        </div>
+        <div id="result"></div>
+    </div>    <div id="glassContainer"></div>
+    <div class="copyright">©Ft.Rixz</div>
+
+    <script>
+        function moveButton() {
+            const button = document.getElementById('dodgeButton');
+            const maxX = window.innerWidth - button.offsetWidth;
+            const maxY = window.innerHeight - button.offsetHeight;
+            
+            // Add some randomness to the movement
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * maxY;
+            
+            // Ensure the button stays within viewport bounds
+            button.style.left = Math.min(Math.max(0, newX), maxX) + 'px';
+            button.style.top = Math.min(Math.max(0, newY), maxY) + 'px';
+            
+            // Add a smooth transform animation
+            button.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+        }
+
+        // Initialize button position
+        document.addEventListener('DOMContentLoaded', () => {
+            const button = document.getElementById('dodgeButton');
+            button.style.left = '50%';
+            button.style.top = '70%';
+            button.style.transform = 'translate(-50%, -50%)';
+            
+            // Move on hover
+            button.addEventListener('mouseover', moveButton);
+            
+            // Move on touch (for mobile devices)
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                moveButton();
+            });
+            
+            // Move on click attempt
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                moveButton();
+            });
+        });
+
+        function createFireParticles() {
+            const container = document.getElementById('fireParticles');
+            container.style.display = 'block';
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(particle);
+            }
+
+            setTimeout(() => {
+                container.style.display = 'none';
+                container.innerHTML = '';
+            }, 4000);
+        }
+
+        function createGlassShatter() {
+            const container = document.getElementById('glassContainer');
+            const pieces = 12;
+            
+            for (let i = 0; i < pieces; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'glass-piece';
+                piece.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+                piece.style.setProperty('--ty', (Math.random() * 200 - 100) + 'px');
+                piece.style.setProperty('--rot', (Math.random() * 360) + 'deg');
+                piece.style.width = Math.random() * 50 + 20 + 'px';
+                piece.style.height = Math.random() * 50 + 20 + 'px';
+                piece.style.left = '50%';
+                piece.style.top = '50%';
+                piece.style.display = 'block';
+                container.appendChild(piece);
+            }
+
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 2000);
+        }
+
+        function readMind() {
+            const thought = document.getElementById('thoughtInput').value;
+            if (!thought.trim()) {
+                alert('Please enter your thought first!');
+                return;
+            }// Hide input section and show loading
+            document.getElementById('inputSection').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            
+            // Change container background
+            document.querySelector('.container').classList.add('reading-mind');
+
+            // Start fire and glass animations
+            createFireParticles();
+            setTimeout(createGlassShatter, 2000);
+
+            // After 4 seconds, show the result
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';                resultDiv.innerHTML = `
+                    <p>✨ I have penetrated the depths of your mind! ✨</p>
+                    <p>You were thinking of:</p>
+                    <h2>${thought}</h2>
+                    <button onclick="resetGame()">Try Again</button>
+                `;
+            }, 4000);
+        }        function resetGame() {
+            document.getElementById('thoughtInput').value = '';
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('fireParticles').innerHTML = '';
+            document.getElementById('glassContainer').innerHTML = '';
+            document.querySelector('.container').classList.remove('reading-mind');
+        }
+    </script>
+</body>
+</html>
